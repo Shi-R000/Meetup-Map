@@ -8,6 +8,13 @@
 <body>
   <h1>待ち合わせマップ</h1>
   <p>一時的に位置を共有するサービスです。</p>
-  <button type="button">部屋を作成する</button>
+  <button type="button" id="create-room-button">部屋を作成する</button>
+  <script>
+  const createRoomButton = document.getElementById("create-room-button");
+
+  createRoomButton.addEventListener("click", function () {
+    alert("部屋作成の準備ができました！");
+  });
+</script>
 </body>
 </html>
