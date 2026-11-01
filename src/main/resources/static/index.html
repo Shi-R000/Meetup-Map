@@ -22,6 +22,8 @@
     <p id="duration-message"></p>
     <button type="button" id="confirm-room-button">この時間で部屋を作成</button>
     <p id="room-result" aria-live="polite"></p>
+    <p id="room-link-message"></p>
+    <input id="room-link" type="text" readonly hidden>
   </section>
 
   <script>
@@ -39,10 +41,19 @@
     });
     confirmRoomButton.addEventListener("click", function () {
       const selectedDuration =
-      durationSelect.options[durationSelect.selectedIndex].text;
+        durationSelect.options[durationSelect.selectedIndex].text;
       const roomResult = document.getElementById("room-result");
+      const roomLinkMessage = document.getElementById("room-link-message");
+      const roomLink = document.getElementById("room-link");
+
+      const roomId = crypto.randomUUID();
+      const shareUrl = window.location.origin + "/?room=" + roomId;
+
       roomResult.textContent =
-      selectedDuration + "の部屋を作成する準備ができました。";
+        selectedDuration + "の部屋を作成する準備ができました。";
+      roomLinkMessage.textContent = "共有URL（画面確認用）：";
+      roomLink.value = shareUrl;
+      roomLink.hidden = false;
     });
     
   </script>
