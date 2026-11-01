@@ -14,6 +14,8 @@
       <h2>部屋に参加する</h2>
       <p>共有URLから部屋を開きました。</p>
       <p id="join-room-id"></p>
+      <button type="button" id="share-location-button">位置情報を共有する</button>
+      <p id="location-message" aria-live="polite"></p>
     </section>
   <section id="room-settings" hidden>
     <h2>共有時間を選ぶ</h2>
@@ -80,6 +82,36 @@
       joinRoom.hidden = false;
       joinRoomId.textContent = "部屋ID：" + roomIdFromUrl;
     }
+
+    const shareLocationButton = document.getElementById("share-location-button");
+    const locationMessage = document.getElementById("location-message");
+
+    shareLocationButton.addEventListener("click", function () {
+      if (!navigator.geolocation) {
+        locationMessage.textContent = "このブラウザーでは位置情報を利用できません。";
+        return;
+      }
+
+      locationMessage.textContent = "位置情報の許可を確認しています…";
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          locationMessage.textContent =
+            "位置情報を取得しました（緯度：" +
+            latitude.toFixed(5) +
+            "、経度：" +
+            longitude.toFixed(5) +
+            "）。";
+        },
+        function () {
+          locationMessage.textContent =
+            "位置情報を取得できませんでした。ブラウザーの許可設定を確認してください。";
+        }
+      );
+    });
 
   </script>
 </body>
