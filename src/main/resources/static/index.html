@@ -24,6 +24,7 @@
     <p id="room-result" aria-live="polite"></p>
     <p id="room-link-message"></p>
     <input id="room-link" type="text" readonly hidden>
+    <button type="button" id="copy-room-link-button">共有URLをコピー</button>
   </section>
 
   <script>
@@ -32,6 +33,7 @@
     const durationSelect = document.getElementById("duration");
     const durationMessage = document.getElementById("duration-message");
     const confirmRoomButton = document.getElementById("confirm-room-button");
+    const copyRoomLinkButton = document.getElementById("copy-room-link-button");
 
     createRoomButton.addEventListener("click", function () {
       roomSettings.hidden = false;
@@ -54,6 +56,18 @@
       roomLinkMessage.textContent = "共有URL（画面確認用）：";
       roomLink.value = shareUrl;
       roomLink.hidden = false;
+    });
+    copyRoomLinkButton.addEventListener("click", async function () {
+      const roomLink = document.getElementById("room-link");
+
+      try {
+        await navigator.clipboard.writeText(roomLink.value);
+        document.getElementById("room-link-message").textContent =
+          "共有URLをコピーしました。";
+      } catch (error) {
+        document.getElementById("room-link-message").textContent =
+          "コピーできませんでした。URL欄から手動でコピーしてください。";
+      }
     });
     
   </script>
