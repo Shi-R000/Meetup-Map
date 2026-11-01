@@ -84,9 +84,11 @@
       joinRoomId.textContent = "部屋ID：" + roomIdFromUrl;
     }
 
-  const shareLocationButton = document.getElementById("share-location-button");
+   const shareLocationButton = document.getElementById("share-location-button");
   const stopLocationButton = document.getElementById("stop-location-button");
   const locationMessage = document.getElementById("location-message");
+
+  let locationWatchId = null;
 
   shareLocationButton.addEventListener("click", function () {
     if (!navigator.geolocation) {
@@ -94,15 +96,19 @@
       return;
     }
 
+    if (locationWatchId !== null) {
+      return;
+    }
+
     locationMessage.textContent = "位置情報の許可を確認しています…";
 
-    navigator.geolocation.getCurrentPosition(
+    locationWatchId = navigator.geolocation.watchPosition(
       function (position) {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
 
         locationMessage.textContent =
-          "位置情報を取得しました（緯度：" +
+          "位置情報を取得中（緯度：" +
           latitude.toFixed(5) +
           "、経度：" +
           longitude.toFixed(5) +
@@ -112,12 +118,21 @@
       function () {
         locationMessage.textContent =
           "位置情報を取得できませんでした。ブラウザーの許可設定を確認してください。";
+        locationWatchId = null;
+        stopLocationButton.disabled = true;
       }
     );
+
+    stopLocationButton.disabled = false;
   });
 
   stopLocationButton.addEventListener("click", function () {
-    locationMessage.textContent = "位置情報の共有を停止しました。";
+    if (locationWatchId !== null) {
+      navigator.geolocation.clearWatch(locationWatchId);
+      locationWatchId = null;
+    }
+
+    locationMessage.textContent = "位置情報の取得を停止しました。";
     stopLocationButton.disabled = true;
   });
 
