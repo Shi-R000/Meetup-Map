@@ -16,6 +16,7 @@
       <p id="join-room-id"></p>
       <button type="button" id="share-location-button">位置情報を共有する</button>
       <p id="location-message" aria-live="polite"></p>
+      <button type="button" id="stop-location-button" disabled>位置情報の共有を停止</button>
     </section>
   <section id="room-settings" hidden>
     <h2>共有時間を選ぶ</h2>
@@ -83,35 +84,42 @@
       joinRoomId.textContent = "部屋ID：" + roomIdFromUrl;
     }
 
-    const shareLocationButton = document.getElementById("share-location-button");
-    const locationMessage = document.getElementById("location-message");
+  const shareLocationButton = document.getElementById("share-location-button");
+  const stopLocationButton = document.getElementById("stop-location-button");
+  const locationMessage = document.getElementById("location-message");
 
-    shareLocationButton.addEventListener("click", function () {
-      if (!navigator.geolocation) {
-        locationMessage.textContent = "このブラウザーでは位置情報を利用できません。";
-        return;
+  shareLocationButton.addEventListener("click", function () {
+    if (!navigator.geolocation) {
+      locationMessage.textContent = "このブラウザーでは位置情報を利用できません。";
+      return;
+    }
+
+    locationMessage.textContent = "位置情報の許可を確認しています…";
+
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        locationMessage.textContent =
+          "位置情報を取得しました（緯度：" +
+          latitude.toFixed(5) +
+          "、経度：" +
+          longitude.toFixed(5) +
+          "）。";
+        stopLocationButton.disabled = false;
+      },
+      function () {
+        locationMessage.textContent =
+          "位置情報を取得できませんでした。ブラウザーの許可設定を確認してください。";
       }
+    );
+  });
 
-      locationMessage.textContent = "位置情報の許可を確認しています…";
-
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-
-          locationMessage.textContent =
-            "位置情報を取得しました（緯度：" +
-            latitude.toFixed(5) +
-            "、経度：" +
-            longitude.toFixed(5) +
-            "）。";
-        },
-        function () {
-          locationMessage.textContent =
-            "位置情報を取得できませんでした。ブラウザーの許可設定を確認してください。";
-        }
-      );
-    });
+  stopLocationButton.addEventListener("click", function () {
+    locationMessage.textContent = "位置情報の共有を停止しました。";
+    stopLocationButton.disabled = true;
+  });
 
   </script>
 </body>
