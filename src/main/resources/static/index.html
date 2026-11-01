@@ -8,13 +8,43 @@
 <body>
   <h1>待ち合わせマップ</h1>
   <p>一時的に位置を共有するサービスです。</p>
-  <button type="button" id="create-room-button">部屋を作成する</button>
-  <script>
-  const createRoomButton = document.getElementById("create-room-button");
 
-  createRoomButton.addEventListener("click", function () {
-    alert("部屋作成の準備ができました！");
-  });
-</script>
+  <button type="button" id="create-room-button">部屋を作成する</button>
+
+  <section id="room-settings" hidden>
+    <h2>共有時間を選ぶ</h2>
+    <label for="duration">共有時間：</label>
+    <select id="duration">
+      <option value="30">30分</option>
+      <option value="60">1時間</option>
+      <option value="180">3時間</option>
+    </select>
+    <p id="duration-message"></p>
+    <button type="button" id="confirm-room-button">この時間で部屋を作成</button>
+    <p id="room-result" aria-live="polite"></p>
+  </section>
+
+  <script>
+    const createRoomButton = document.getElementById("create-room-button");
+    const roomSettings = document.getElementById("room-settings");
+    const durationSelect = document.getElementById("duration");
+    const durationMessage = document.getElementById("duration-message");
+    const confirmRoomButton = document.getElementById("confirm-room-button");
+
+    createRoomButton.addEventListener("click", function () {
+      roomSettings.hidden = false;
+    });
+    durationSelect.addEventListener("change", function () {
+      durationMessage.textContent ="共有時間：" + durationSelect.options[durationSelect.selectedIndex].text;
+    });
+    confirmRoomButton.addEventListener("click", function () {
+      const selectedDuration =
+      durationSelect.options[durationSelect.selectedIndex].text;
+      const roomResult = document.getElementById("room-result");
+      roomResult.textContent =
+      selectedDuration + "の部屋を作成する準備ができました。";
+    });
+    
+  </script>
 </body>
 </html>
