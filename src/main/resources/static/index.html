@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>待ち合わせマップ</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
 </head>
 <body>
   <h1>待ち合わせマップ</h1>
@@ -16,6 +20,7 @@
       <p id="join-room-id"></p>
       <button type="button" id="share-location-button">位置情報を共有する</button>
       <p id="location-message" aria-live="polite"></p>
+      <div id="map" style="height: 350px;"></div>
       <button type="button" id="stop-location-button" disabled>位置情報の共有を停止</button>
     </section>
   <section id="room-settings" hidden>
@@ -89,6 +94,8 @@
   const locationMessage = document.getElementById("location-message");
 
   let locationWatchId = null;
+  let map = null;
+  let locationMarker = null;
 
   shareLocationButton.addEventListener("click", function () {
     if (!navigator.geolocation) {
@@ -106,6 +113,14 @@
       function (position) {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
+        if (map !== null) {
+          if (locationMarker === null) {
+            locationMarker = L.marker([latitude, longitude]).addTo(map);
+          } else {
+            locationMarker.setLatLng([latitude, longitude]);
+          }
+          map.setView([latitude, longitude]);
+        }
 
         locationMessage.textContent =
           "位置情報を取得中（緯度：" +
@@ -135,7 +150,21 @@
     locationMessage.textContent = "位置情報の取得を停止しました。";
     stopLocationButton.disabled = true;
   });
-
+  </script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // const map = L.map('map').setView([35.6812, 139.7671], 13);
+    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // attribution: '&copy; OpenStreetMap contributors'
+    // }).addTo(map);
+    if (roomIdFromUrl) {
+      joinRoom.hidden = false;
+      joinRoomId.textContent = "部屋ID：" + roomIdFromUrl;
+      map = L.map("map").setView([35.6812, 139.7671], 13);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(map);
+    }
   </script>
 </body>
 </html>
